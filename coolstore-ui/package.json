@@ -22,6 +22,6 @@
     "node": ">=0.10.10"
   },
   "scripts": {
-    "postinstall": "node_modules/.bin/bower --config.registry.search=${BOWER_MIRROR} install"
+    "postinstall": "node_modules/.bin/bower --config.registry.search= install"
   }
 }
