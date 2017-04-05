@@ -106,7 +106,7 @@ GITHUB_REF=${GITHUB_REF:-master}
 GITHUB_URI=https://github.com/$GITHUB_ACCOUNT/coolstore-microservice.git
 
 # maven 
-MAVEN_MIRROR_URL=${ARG_MAVEN_MIRROR_URL:-http://nexus.$PRJ_CI.svc.cluster.local:8081/content/groups/public}
+MAVEN_MIRROR_URL=${ARG_MAVEN_MIRROR_URL:-https://nexus-$PRJ_CI.apps.icl-services.com/content/groups/public}
 
 GOGS_USER=developer
 GOGS_PASSWORD=developer
@@ -236,7 +236,7 @@ function deploy_nexus() {
     echo "Using template $_TEMPLATE"
     oc process -f $_TEMPLATE -n $PRJ_CI | oc create -f - -n $PRJ_CI
     sleep 5
-    oc set resources dc/nexus --limits=cpu=1,memory=2Gi --requests=cpu=200m,memory=1Gi -n $PRJ_CI
+    oc set resources dc/nexus  --limits=cpu=1,memory=2Gi  --requests=cpu=200m,memory=1Gi -n $PRJ_CI
   else
     echo_header "Using existng Maven mirror: $ARG_MAVEN_MIRROR_URL"
   fi
@@ -268,7 +268,7 @@ function deploy_gogs() {
   local _GITHUB_REPO="https://github.com/$GITHUB_ACCOUNT/coolstore-microservice.git"
 
   echo "Using template $_TEMPLATE"
-  oc process -f $_TEMPLATE -v HOSTNAME=$GOGS_ROUTE -v GOGS_VERSION=0.9.113 -v DATABASE_USER=$_DB_USER -v DATABASE_PASSWORD=$_DB_PASSWORD -v DATABASE_NAME=$_DB_NAME -v SKIP_TLS_VERIFY=true -n $PRJ_CI | oc create -f - -n $PRJ_CI
+  oc process -f $_TEMPLATE -p HOSTNAME=$GOGS_ROUTE -p GOGS_VERSION=0.9.113 -p DATABASE_USER=$_DB_USER -p DATABASE_PASSWORD=$_DB_PASSWORD -p DATABASE_NAME=$_DB_NAME -p SKIP_TLS_VERIFY=true -n $PRJ_CI | oc create -f - -n $PRJ_CI
 
   sleep 5
 
@@ -370,7 +370,7 @@ function deploy_coolstore_test_env() {
 
   echo_header "Deploying CoolStore app into $PRJ_COOLSTORE_TEST project..."
   echo "Using deployment template $_TEMPLATE_DEPLOYMENT"
-  oc process -f $_TEMPLATE -v APP_VERSION=test -v HOSTNAME_SUFFIX=$PRJ_COOLSTORE_TEST.$DOMAIN -n $PRJ_COOLSTORE_TEST | oc create -f - -n $PRJ_COOLSTORE_TEST
+  oc process -f $_TEMPLATE -p APP_VERSION=test -p HOSTNAME_SUFFIX=$PRJ_COOLSTORE_TEST.$DOMAIN -n $PRJ_COOLSTORE_TEST | oc create -f - -n $PRJ_COOLSTORE_TEST
   sleep 2
   remove_coolstore_storage_if_ephemeral $PRJ_COOLSTORE_TEST
 
@@ -391,11 +391,11 @@ function deploy_coolstore_prod_env() {
   echo "Using bluegreen template $_TEMPLATE_BLUEGREEN"
   echo "Using Netflix OSS template $_TEMPLATE_NETFLIX"
 
-  oc process -f $_TEMPLATE_DEPLOYMENT -v APP_VERSION=prod -v HOSTNAME_SUFFIX=$PRJ_COOLSTORE_PROD.$DOMAIN -n $PRJ_COOLSTORE_PROD | oc create -f - -n $PRJ_COOLSTORE_PROD
+  oc process -f $_TEMPLATE_DEPLOYMENT -p APP_VERSION=prod -p HOSTNAME_SUFFIX=$PRJ_COOLSTORE_PROD.$DOMAIN -n $PRJ_COOLSTORE_PROD | oc create -f - -n $PRJ_COOLSTORE_PROD
   sleep 2
   oc delete all,pvc -l application=inventory --now --ignore-not-found -n $PRJ_COOLSTORE_PROD
   sleep 2
-  oc process -f $_TEMPLATE_BLUEGREEN -v APP_VERSION_BLUE=prod-blue -v APP_VERSION_GREEN=prod-green -v HOSTNAME_SUFFIX=$PRJ_COOLSTORE_PROD.$DOMAIN -n $PRJ_COOLSTORE_PROD | oc create -f - -n $PRJ_COOLSTORE_PROD
+  oc process -f $_TEMPLATE_BLUEGREEN -p APP_VERSION_BLUE=prod-blue -p APP_VERSION_GREEN=prod-green -p HOSTNAME_SUFFIX=$PRJ_COOLSTORE_PROD.$DOMAIN -n $PRJ_COOLSTORE_PROD | oc create -f - -n $PRJ_COOLSTORE_PROD
   sleep 2
   oc create -f $_TEMPLATE_NETFLIX -n $PRJ_COOLSTORE_PROD
   sleep 2
@@ -413,7 +413,7 @@ function deploy_inventory_dev_env() {
 
   echo_header "Deploying Inventory service into $PRJ_INVENTORY project..."
   echo "Using template $_TEMPLATE"
-  oc process -f $_TEMPLATE -v GIT_URI=http://$GOGS_ROUTE/$GOGS_ADMIN_USER/coolstore-microservice.git -v MAVEN_MIRROR_URL=$MAVEN_MIRROR_URL -n $PRJ_INVENTORY | oc create -f - -n $PRJ_INVENTORY
+  oc process -f $_TEMPLATE -p GIT_URI=http://$GOGS_ROUTE/$GOGS_ADMIN_USER/coolstore-microservice.git -p MAVEN_MIRROR_URL=$MAVEN_MIRROR_URL -n $PRJ_INVENTORY | oc create -f - -n $PRJ_INVENTORY
   sleep 2
   # scale down to zero if minimal
   if [ "$ARG_MINIMAL" = true ] ; then
@@ -424,7 +424,7 @@ function deploy_inventory_dev_env() {
 function build_images() {
   local _TEMPLATE_BUILDS="https://raw.githubusercontent.com/$GITHUB_ACCOUNT/coolstore-microservice/$GITHUB_REF/openshift/templates/coolstore-builds-template.yaml"
   echo "Using build template $_TEMPLATE_BUILDS"
-  oc process -f $_TEMPLATE_BUILDS -v GIT_URI=$GITHUB_URI -v GIT_REF=$GITHUB_REF -v MAVEN_MIRROR_URL=$MAVEN_MIRROR_URL -n $PRJ_COOLSTORE_TEST | oc create -f - -n $PRJ_COOLSTORE_TEST
+  oc process -f $_TEMPLATE_BUILDS -p GIT_URI=$GITHUB_URI -p GIT_REF=$GITHUB_REF -p MAVEN_MIRROR_URL=$MAVEN_MIRROR_URL -n $PRJ_COOLSTORE_TEST | oc create -f - -n $PRJ_COOLSTORE_TEST
 
   sleep 10
 
@@ -480,7 +480,7 @@ function deploy_pipeline() {
   local _PIPELINE_NAME=inventory-pipeline
   local _TEMPLATE=https://raw.githubusercontent.com/$GITHUB_ACCOUNT/coolstore-microservice/$GITHUB_REF/openshift/templates/inventory-pipeline-template.yaml
 
-  oc process -f $_TEMPLATE -v PIPELINE_NAME=$_PIPELINE_NAME -v DEV_PROJECT=$PRJ_INVENTORY -v TEST_PROJECT=$PRJ_COOLSTORE_TEST -v PROD_PROJECT=$PRJ_COOLSTORE_PROD -v GENERIC_WEBHOOK_SECRET=$WEBHOOK_SECRET -n $PRJ_CI | oc create -f - -n $PRJ_CI
+  oc process -f $_TEMPLATE -p PIPELINE_NAME=$_PIPELINE_NAME -p DEV_PROJECT=$PRJ_INVENTORY -p TEST_PROJECT=$PRJ_COOLSTORE_TEST -p PROD_PROJECT=$PRJ_COOLSTORE_PROD -p GENERIC_WEBHOOK_SECRET=$WEBHOOK_SECRET -n $PRJ_CI | oc create -f - -n $PRJ_CI
 
   # configure webhook to trigger pipeline
   read -r -d '' _DATA_JSON << EOM
@@ -522,7 +522,7 @@ function deploy_guides() {
   echo_header "Deploying Demo Guides"
   local _DEMO_CONTENT_URL="https://raw.githubusercontent.com/osevg/workshopper-content/stable"
   local _DEMOS="$_DEMO_CONTENT_URL/demos/_demo-all.yml,$_DEMO_CONTENT_URL/demos/_demo-msa.yml,$_DEMO_CONTENT_URL/demos/_demo-agile-integration.yml,$_DEMO_CONTENT_URL/demos/_demo-cicd-eap.yml"
-  oc new-app --name=guides jboss-eap70-openshift~https://github.com/osevg/workshopper.git#stable -n $PRJ_CI -e WORKSHOPS_URLS=$_DEMOS -e CONTENT_URL_PREFIX=$_DEMO_CONTENT_URL -e PROJECT_SUFFIX=$PRJ_SUFFIX -e GOGS_URL=http://$GOGS_ROUTE -e GOGS_DEV_REPO_URL_PREFIX=http://$GOGS_ROUTE/$GOGS_USER/coolstore-microservice -e JENKINS_URL=http://jenkins-$PRJ_CI.$DOMAIN -e COOLSTORE_WEB_PROD_URL=http://web-ui-$PRJ_COOLSTORE_PROD.$DOMAIN -e HYSTRIX_PROD_URL=http://hystrix-dashboard-$PRJ_COOLSTORE_PROD.$DOMAIN -e GOGS_DEV_USER=$GOGS_USER -e GOGS_DEV_PASSWORD=$GOGS_PASSWORD -e GOGS_REVIEWER_USER=$GOGS_ADMIN_USER -e GOGS_REVIEWER_PASSWORD=$GOGS_ADMIN_PASSWORD -e OCP_VERSION=3.4 -n $PRJ_CI
+  oc new-app --name=guides jboss-eap70-openshift~https://github.com/osevg/workshopper.git
   oc expose svc/guides -n $PRJ_CI
   oc cancel-build bc/guides -n $PRJ_CI
   oc set env bc/guides MAVEN_MIRROR_URL=$MAVEN_MIRROR_URL -n $PRJ_CI

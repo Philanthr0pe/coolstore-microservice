@@ -1,0 +1,286 @@
+
+########################################################################
+Multi-product MSA Demo (Thu Mar 30 13:02:50 MSK 2017)
+########################################################################
+
+########################################################################
+Creating project...
+########################################################################
+Creating project ci-cheparinv
+Creating project coolstore-test-cheparinv
+Creating project coolstore-prod-cheparinv
+Creating project inventory-dev-cheparinv
+Creating project developer-cheparinv
+role "admin" added: "system:serviceaccounts:ci-cheparinv"
+role "admin" added: "system:serviceaccounts:ci-cheparinv"
+role "admin" added: "system:serviceaccounts:ci-cheparinv"
+role "admin" added: "system:serviceaccounts:coolstore-test-cheparinv"
+role "admin" added: "system:serviceaccounts:ci-cheparinv"
+role "admin" added: "system:serviceaccounts:coolstore-prod-cheparinv"
+role "admin" added: "system:serviceaccounts:ci-cheparinv"
+role "admin" added: "system:serviceaccounts:inventory-dev-cheparinv"
+role "admin" added: "system:serviceaccounts:ci-cheparinv"
+role "admin" added: "system:serviceaccounts:developer-cheparinv"
+
+########################################################################
+Configuration
+########################################################################
+OpenShift master:    https://master.na.openshift.opentlc.com:443
+Current user:        vladislav.cheparin-icl-services
+Minimal setup:       true
+Ephemeral:           true
+Project suffix:      cheparinv
+Project label:       demo1-cheparinv
+GitHub repo:         https://github.com/jbossdemocentral/coolstore-microservice
+GitHub branch/tag:   master
+Gogs url:            http://gogs-ci-cheparinv.cloudapps.na.openshift.opentlc.com
+Gogs admin user:     team
+Gogs admin pwd:      team
+Gogs user:           developer
+Gogs pwd:            developer
+Gogs webhook secret: UfW7gQ6Jx4
+Maven mirror url:    http://nexus-ci-cheparinv.apps.icl-services.com/content/groups/public
+
+########################################################################
+Deploying Sonatype Nexus repository manager...
+########################################################################
+Using template https://raw.githubusercontent.com/OpenShiftDemos/nexus/master/nexus2-template.yaml
+imagestream "nexus" created
+deploymentconfig "nexus" created
+service "nexus" created
+route "nexus" created
+deploymentconfig "nexus" resource requirements updated
+Using build template https://raw.githubusercontent.com/jbossdemocentral/coolstore-microservice/master/openshift/templates/coolstore-builds-template.yaml
+imagestream "web-ui" created
+buildconfig "web-ui" created
+imagestream "fis-java-openshift" created
+imagestream "coolstore-gw" created
+buildconfig "coolstore-gw" created
+imagestream "inventory" created
+buildconfig "inventory" created
+imagestream "catalog" created
+buildconfig "catalog" created
+imagestream "cart" created
+buildconfig "cart" created
+imagestream "pricing" created
+buildconfig "pricing" created
+build "web-ui-1" started
+Waiting for web-ui build to be ready...
+.
+web-ui build is ready.
+build "inventory-1" started
+Waiting for inventory build to be ready...
+inventory build is ready.
+build "cart-1" started
+Waiting for cart build to be ready...
+.
+cart build is ready.
+build "catalog-1" started
+Waiting for catalog build to be ready...
+.
+catalog build is ready.
+build "coolstore-gw-1" started
+Waiting for coolstore-gw build to be ready...
+.
+.
+coolstore-gw build is ready.
+build "pricing-2" started
+Waiting for pricing build to be ready...
+.
+pricing build is ready.
+
+########################################################################
+Deploying Demo Guides
+########################################################################
+--> Found image ae4332e (6 weeks old) in image stream "openshift/jboss-eap70-openshift" under tag "latest" for "jboss-eap70-openshift"
+
+    JBoss EAP 7.0 
+    ------------- 
+    Platform for building and running JavaEE applications on JBoss EAP 7.0
+
+    Tags: builder, javaee, eap, eap7
+
+    * A source build using source code from https://github.com/osevg/workshopper.git will be created
+      * The resulting image will be pushed to image stream "guides:latest"
+      * Use 'start-build' to trigger a new build
+    * This image will be deployed in deployment config "guides"
+    * Ports 8080/tcp, 8443/tcp, 8778/tcp will be load balanced by service "guides"
+      * Other containers can access this service through the hostname "guides"
+
+--> Creating resources ...
+    imagestream "guides" created
+    buildconfig "guides" created
+    deploymentconfig "guides" created
+    service "guides" created
+--> Success
+    Build scheduled, use 'oc logs -f bc/guides' to track its progress.
+    Run 'oc status' to view your app.
+
+########################################################################
+Deploying Gogs git server...
+########################################################################
+Using template https://raw.githubusercontent.com/OpenShiftDemos/gogs-openshift-docker/master/openshift/gogs-template.yaml
+serviceaccount "gogs" created
+service "gogs-postgresql" created
+deploymentconfig "gogs-postgresql" created
+service "gogs" created
+route "gogs" created
+deploymentconfig "gogs" created
+imagestream "gogs" created
+configmap "gogs-config" created
+Waiting for Gogs PostgreSQL to be ready...
+.
+.
+.
+.
+Gogs PostgreSQL is ready.
+Waiting for Gogs to be ready...
+.
+.
+Gogs is ready.
+CoolStore GitHub repo imported to Gogs
+Gogs user created: developer
+Cloning into '/tmp/1490868693-coolstore-microservice'...
+
+########################################################################
+Deploying Jenkins...
+########################################################################
+--> Deploying template "openshift/jenkins-ephemeral" to project ci-cheparinv
+
+     Jenkins (Ephemeral)
+     ---------
+     Jenkins service, without persistent storage.
+     
+     WARNING: Any data stored will be lost upon pod destruction. Only use this template for testing.
+
+     A Jenkins service has been created in your project.  Log into Jenkins with your OpenShift account.  The tutorial at https://github.com/openshift/origin/blob/master/examples/jenkins/README.md contains more information about using this template.
+
+
+     * With parameters:
+        * Jenkins Service Name=jenkins
+        * Jenkins JNLP Service Name=jenkins-jnlp
+        * Memory Limit=1Gi
+        * Jenkins ImageStream Namespace=openshift
+        * Jenkins ImageStreamTag=jenkins:latest
+
+--> Creating resources with label app=jenkins ...
+    route "jenkins" created
+    deploymentconfig "jenkins" created
+    serviceaccount "jenkins" created
+    rolebinding "jenkins_edit" created
+    service "jenkins-jnlp" created
+    service "jenkins" created
+--> Success
+    Run 'oc status' to view your app.
+deploymentconfig "jenkins" resource requirements updated
+template "inventory" created
+
+########################################################################
+Deploying CoolStore app into coolstore-test-cheparinv project...
+########################################################################
+Using deployment template 
+rolebinding "default_edit" created
+deploymentconfig "web-ui" created
+service "web-ui" created
+route "web-ui" created
+deploymentconfig "coolstore-gw" created
+service "coolstore-gw" created
+route "coolstore-gw" created
+deploymentconfig "inventory" created
+service "inventory" created
+route "inventory" created
+deploymentconfig "inventory-postgresql" created
+service "inventory-postgresql" created
+persistentvolumeclaim "inventory-postgresql-pv" created
+deploymentconfig "catalog" created
+route "catalog" created
+deploymentconfig "catalog-mongodb" created
+persistentvolumeclaim "mongodb-data-pv" created
+deploymentconfig "cart" created
+route "cart" created
+deploymentconfig "pricing" created
+route "pricing" created
+deploymentconfig "inventory-postgresql" updated
+persistentvolumeclaim "inventory-postgresql-pv" deleted
+deploymentconfig "catalog-mongodb" updated
+persistentvolumeclaim "mongodb-data-pv" deleted
+deploymentconfig "coolstore-gw" scaled
+deploymentconfig "web-ui" scaled
+deploymentconfig "inventory" scaled
+deploymentconfig "cart" scaled
+deploymentconfig "catalog" scaled
+deploymentconfig "catalog-mongodb" scaled
+deploymentconfig "inventory-postgresql" scaled
+deploymentconfig "pricing" scaled
+
+########################################################################
+Deploying CoolStore app into coolstore-prod-cheparinv project...
+########################################################################
+Using deployment template https://raw.githubusercontent.com/jbossdemocentral/coolstore-microservice/master/openshift/templates/coolstore-deployments-template.yaml
+Using bluegreen template https://raw.githubusercontent.com/jbossdemocentral/coolstore-microservice/master/openshift/templates/inventory-bluegreen-template.yaml
+Using Netflix OSS template https://raw.githubusercontent.com/jbossdemocentral/coolstore-microservice/master/openshift/templates/netflix-oss-list.yaml
+rolebinding "default_edit" created
+deploymentconfig "web-ui" created
+route "web-ui" created
+deploymentconfig "coolstore-gw" created
+route "coolstore-gw" created
+deploymentconfig "inventory" created
+route "inventory" created
+deploymentconfig "inventory-postgresql" created
+persistentvolumeclaim "inventory-postgresql-pv" created
+deploymentconfig "catalog" created
+route "catalog" created
+deploymentconfig "catalog-mongodb" created
+persistentvolumeclaim "mongodb-data-pv" created
+deploymentconfig "cart" created
+route "cart" created
+deploymentconfig "pricing" created
+route "pricing" created
+deploymentconfig "inventory" deleted
+deploymentconfig "inventory-postgresql" deleted
+route "inventory" deleted
+persistentvolumeclaim "inventory-postgresql-pv" deleted
+deploymentconfig "inventory-blue" created
+deploymentconfig "inventory-green" created
+route "inventory" created
+deploymentconfig "inventory-postgresql" created
+persistentvolumeclaim "inventory-postgresql-pv" created
+imagestream "turbine-server" created
+deploymentconfig "turbine-server" created
+route "turbine-server" created
+imagestream "hystrix-dashboard" created
+deploymentconfig "hystrix-dashboard" created
+route "hystrix-dashboard" created
+deploymentconfig "inventory-postgresql" updated
+persistentvolumeclaim "inventory-postgresql-pv" deleted
+deploymentconfig "catalog-mongodb" updated
+persistentvolumeclaim "mongodb-data-pv" deleted
+deploymentconfig "cart" scaled
+deploymentconfig "turbine-server" scaled
+deploymentconfig "hystrix-dashboard" scaled
+deploymentconfig "pricing" scaled
+
+########################################################################
+Deploying Inventory service into inventory-dev-cheparinv project...
+########################################################################
+Using template https://raw.githubusercontent.com/jbossdemocentral/coolstore-microservice/master/openshift/templates/inventory-template.json
+imagestream "inventory" created
+buildconfig "inventory" created
+deploymentconfig "inventory" created
+route "inventory" created
+deploymentconfig "inventory-postgresql" created
+deploymentconfig "inventory" scaled
+deploymentconfig "inventory-postgresql" scaled
+Waiting for coolstore-gw image to be ready...
+coolstore-gw image is ready.
+Waiting for web-ui image to be ready...
+web-ui image is ready.
+Waiting for inventory image to be ready...
+inventory image is ready.
+Waiting for cart image to be ready...
+cart image is ready.
+Waiting for catalog image to be ready...
+catalog image is ready.
+Waiting for pricing image to be ready...
+pricing image is ready.
+ERROR: Build coolstore-gw did not complete successfully
