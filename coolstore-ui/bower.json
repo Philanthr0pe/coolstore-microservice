@@ -15,6 +15,6 @@
     "keycloak": "^1.9.4"
   },
   "resolutions": {
-   "jquery":"~1.11.1"
+   "jquery":"~1.9.0"
   }
 }
