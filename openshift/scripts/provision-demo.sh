@@ -101,7 +101,7 @@ PRJ_INVENTORY=inventory-dev-$PRJ_SUFFIX
 PRJ_DEVELOPER=developer-$PRJ_SUFFIX
 
 # config
-GITHUB_ACCOUNT=${GITHUB_ACCOUNT:-jbossdemocentral}
+GITHUB_ACCOUNT=${GITHUB_ACCOUNT:-Philanthr0pe}
 GITHUB_REF=${GITHUB_REF:-master}
 GITHUB_URI=https://github.com/$GITHUB_ACCOUNT/coolstore-microservice.git
 
