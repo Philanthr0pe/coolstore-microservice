@@ -13,11 +13,31 @@
                         <enabled>false</enabled>
                     </snapshots>
                 </repository>
+		<repository>
+		    <id>central-repository</id>
+                    <url>http://central.maven.org/maven2/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+		</repository>
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
                     <id>jboss-ga-plugin-repository</id>
                     <url>http://maven.repository.redhat.com/techpreview/all</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+		<pluginRepository>
+                    <id>central-repository</id>
+                    <url>http://central.maven.org/maven2/</url>
                     <releases>
                         <enabled>true</enabled>
                     </releases>

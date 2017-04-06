@@ -23,6 +23,20 @@
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
+		<repository>
+                        <id>central-maven-repository</id>
+                        <name>Central Maven Repository</name>
+                        <url>http://central.maven.org/maven2/</url>
+                        <layout>default</layout>
+                        <releases>
+                                <enabled>true</enabled>
+                                <updatePolicy>always</updatePolicy>
+                        </releases>
+                        <snapshots>
+                                <enabled>true</enabled>
+                                <updatePolicy>always</updatePolicy>
+                        </snapshots>
+                </repository>
 	</repositories>
 
 	<pluginRepositories>
@@ -40,6 +54,20 @@
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</pluginRepository>
+		<pluginRepository>
+                        <id>central-maven-repository</id>
+                        <name>Central Maven Repository</name>
+                        <url>http://central.maven.org/maven2/</url>
+                        <layout>default</layout>
+                        <releases>
+                                <enabled>true</enabled>
+                                <updatePolicy>always</updatePolicy>
+                        </releases>
+                        <snapshots>
+                                <enabled>true</enabled>
+                                <updatePolicy>always</updatePolicy>
+                        </snapshots>
+                </pluginRepository>
 	</pluginRepositories>
 
 	<properties>
