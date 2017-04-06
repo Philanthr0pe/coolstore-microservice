@@ -164,8 +164,7 @@
                 <repository>
                         <id>jboss-maven-repository</id>
                         <name>JBoss Maven Repository</name>
-                        <url>http://maven.repository.redhat.com/ga/</url>
-                        <layout>default</layout>
+                        <url>http://maven.repository.redhat.com/ea/</url>
                         <releases>
                                 <enabled>true</enabled>
                                 <updatePolicy>always</updatePolicy>
