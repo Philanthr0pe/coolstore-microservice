@@ -187,7 +187,7 @@
                 <repository>
                         <id>jboss-maven-repository</id>
                         <name>JBoss Maven Repository</name>
-                        <url>http://maven.repository.redhat.com/ea/</url>
+                        <url>http://maven.repository.redhat.com/earlyaccess/all/</url>
                         <releases>
                                 <enabled>true</enabled>
                                 <updatePolicy>always</updatePolicy>
@@ -217,7 +217,7 @@
                 <pluginRepository>
                         <id>jboss-maven-repository</id>
                         <name>JBoss Maven Repository</name>
-                        <url>http://maven.repository.redhat.com/ga/</url>
+                        <url>http://maven.repository.redhat.com/earlyaccess/all/</url>
                         <layout>default</layout>
                         <releases>
                                 <enabled>true</enabled>
