@@ -45,7 +45,7 @@ while :; do
             ;;
         --maven-mirror-url)
             if [ -n "$2" ]; then
-                ARG_MAVEN_MIRROR_URL=$2
+                ARG_MAVEN_MIRROR_URL=
                 shift
             else
                 printf 'ERROR: "--maven-mirror-url" requires a non-empty value.\n' >&2
@@ -106,7 +106,7 @@ GITHUB_REF=${GITHUB_REF:-master}
 GITHUB_URI=https://github.com/$GITHUB_ACCOUNT/coolstore-microservice.git
 
 # maven 
-MAVEN_MIRROR_URL=${ARG_MAVEN_MIRROR_URL:-https://nexus-$PRJ_CI.apps.icl-services.com/content/groups/public}
+#MAVEN_MIRROR_URL=${ARG_MAVEN_MIRROR_URL:-https://nexus-$PRJ_CI.apps.icl-services.com/content/groups/public}
 
 GOGS_USER=developer
 GOGS_PASSWORD=developer
@@ -433,7 +433,7 @@ function build_images() {
   do
     oc start-build $buildconfig -n $PRJ_COOLSTORE_TEST
     wait_while_empty "$buildconfig build" 180 "oc get builds -n $PRJ_COOLSTORE_TEST | grep $buildconfig | grep Running"
-    sleep 10
+    sleep 20
   done
 }
 
@@ -572,12 +572,13 @@ echo_header "Multi-product MSA Demo ($(date))"
 create_projects 
 print_info
 
-deploy_nexus
-wait_for_nexus_to_be_ready
-build_images
+#deploy_nexus
+#wait_for_nexus_to_be_ready
+#build_images
 deploy_guides
 deploy_gogs
 deploy_jenkins
+build_images
 add_inventory_template_to_projects
 deploy_coolstore_test_env
 deploy_coolstore_prod_env
