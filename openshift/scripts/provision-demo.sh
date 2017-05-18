@@ -589,13 +589,13 @@ build_images
 #deploy_gogs
 #deploy_jenkins
 #build_images
-#add_inventory_template_to_projects
-#deploy_coolstore_test_env
-#deploy_coolstore_prod_env
-#deploy_inventory_dev_env
-#promote_images
+add_inventory_template_to_projects
+deploy_coolstore_test_env
+deploy_coolstore_prod_env
+deploy_inventory_dev_env
+promote_images
 #deploy_pipeline
-#sleep 30
+sleep 30
 #verify_deployments
 #set_default_project
 
